@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>مسلسل الحفرة مدبلج</title>
+    <style>
+        /* إزالة أي هوامش أو فراغات */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body, html { 
+            width: 100%; 
+            height: 100%; 
+            background: black; 
+            overflow: hidden; 
+        }
+
+        .player-container { 
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw; 
+            height: 100vh; 
+            background: black; 
+        }
+
+        #player { 
+            width: 100%; 
+            height: 100%; 
+            border: none;
+        }
+        /* تم حذف الـ overlay والـ touch-layer نهائياً */
+    </style>
+</head>
+<body>
+
+    <div class="player-container">
+        <div id="player"></div>
+    </div>
+
+    <script src="https://www.youtube.com/iframe_api"></script>
+
+    <script>
+        const rawLinks = `
+https://www.youtube.com/watch?v=uCrliwdXg_w&t=7001s
+https://www.youtube.com/watch?v=IJlaUCi7DIs
+https://www.youtube.com/watch?v=hmI3kIVIMI0
+https://www.youtube.com/watch?v=KidB-nvX4s0
+https://www.youtube.com/watch?v=SVFO8GkMTbk
+https://www.youtube.com/watch?v=IMmVUPX_5rI
+https://www.youtube.com/watch?v=ICfSSiQBvN4
+https://www.youtube.com/watch?v=gXzBFaYfPa0
+https://www.youtube.com/watch?v=BCTlnj8baBw
+https://www.youtube.com/watch?v=O4WK53JbJvs
+https://www.youtube.com/watch?v=IGnQ4VSAy8Q
+https://www.youtube.com/watch?v=Qd-Op_2weJw
+https://www.youtube.com/watch?v=3kzOlD7X7Rs
+https://www.youtube.com/watch?v=vMB3iMAsXfA
+https://www.youtube.com/watch?v=lS1Y3CHdBPw
+https://www.youtube.com/watch?v=U7Gn-LO2gDU
+https://www.youtube.com/watch?v=DhUdlw48ClA
+https://www.youtube.com/watch?v=nsy3pMdHx8A
+https://www.youtube.com/watch?v=TKzswlG8Azo
+https://www.youtube.com/watch?v=S6Qh3U-HPQs
+https://www.youtube.com/watch?v=zm8zAwydcVc
+https://www.youtube.com/watch?v=DRfanHnAfx0
+https://www.youtube.com/watch?v=-15uL4heMFY
+https://www.youtube.com/watch?v=zEbAsz5pZpQ
+https://www.youtube.com/watch?v=XAORX3YaHfU
+https://www.youtube.com/watch?v=M9GgCZNhg3A
+https://www.youtube.com/watch?v=EsKdKAL8NtM
+https://www.youtube.com/watch?v=v1hRRAO-oLg
+https://www.youtube.com/watch?v=5EKxg87d8HY
+https://www.youtube.com/watch?v=pbwh7UMnpww
+https://www.youtube.com/watch?v=S3p1e9Th7yk
+https://www.youtube.com/watch?v=G4Pq8ytixk4
+https://www.youtube.com/watch?v=6R6nWjZSJkg
+https://www.youtube.com/watch?v=3YkNMzs53DQ
+https://www.youtube.com/watch?v=CRkBeE2FXCE
+https://www.youtube.com/watch?v=Btl6rp5w9wI
+https://www.youtube.com/watch?v=tQPjBL-B1uQ
+https://www.youtube.com/watch?v=lFrULUAvXM4
+https://www.youtube.com/watch?v=NB1x00UtfYw
+https://www.youtube.com/watch?v=KTv36xJRSFw
+https://www.youtube.com/watch?v=HLwXRnjmlXo
+https://www.youtube.com/watch?v=bHOqi5ba06g
+https://www.youtube.com/watch?v=evlROJpuX8w
+https://www.youtube.com/watch?v=AalRi3wfcDA
+https://www.youtube.com/watch?v=UExPWGlEovk
+https://www.youtube.com/watch?v=3v2p7cjX9eQ
+https://www.youtube.com/watch?v=K9j0fueRDyk
+https://www.youtube.com/watch?v=ACg0qwXLg0Q
+https://www.youtube.com/watch?v=D2uDXwMI4oc
+https://www.youtube.com/watch?v=6sJkCCmZrGo
+https://www.youtube.com/watch?v=nd3XrLCjvbU
+https://www.youtube.com/watch?v=LoW7_i_Zxf8
+https://www.youtube.com/watch?v=Wbjv3Dm9V1U
+https://www.youtube.com/watch?v=yxL5zhsWdiU
+https://www.youtube.com/watch?v=9jUJtY1u-iY
+https://www.youtube.com/watch?v=2TjiTxWQb5Q
+https://www.youtube.com/watch?v=RL5Oboh2F6M
+https://www.youtube.com/watch?v=MMn9IVVelQk
+https://www.youtube.com/watch?v=CsRuWUBV4aM
+https://www.youtube.com/watch?v=p0qw0IWQ_GE
+
+
+
+        `;
+
+        const videoIDs = rawLinks.trim().split(/\s+/).map(url => {
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? match[2] : null;
+        }).filter(id => id !== null);
+
+        const playlist = videoIDs.map((id, index) => {
+            return { id: id, duration: (index === 0) ? 182 : 300 };
+        });
+
+        // المرجع الثابت: 8 مايو 2026
+        const FIXED_EPOCH = new Date(2026, 4, 8, 0, 0, 0).getTime();
+        let player;
+
+        function onYouTubeIframeAPIReady() {
+            syncStream();
+        }
+
+        function syncStream() {
+            const currentTime = Date.now();
+            const totalPlaylistTime = playlist.reduce((acc, v) => acc + v.duration, 0);
+            let totalElapsed = Math.floor((currentTime - FIXED_EPOCH) / 1000);
+            if (totalElapsed < 0) totalElapsed = 0;
+
+            const currentPos = totalElapsed % totalPlaylistTime;
+            let timeSum = 0;
+            let targetIdx = 0;
+            let seekTime = 0;
+
+            for (let i = 0; i < playlist.length; i++) {
+                if (currentPos < timeSum + playlist[i].duration) {
+                    targetIdx = i;
+                    seekTime = currentPos - timeSum;
+                    break;
+                }
+                timeSum += playlist[i].duration;
+            }
+            loadVideo(playlist[targetIdx].id, seekTime);
+        }
+
+        function loadVideo(vidId, startTime) {
+            if (player && player.loadVideoById) {
+                player.loadVideoById({ videoId: vidId, startSeconds: startTime });
+            } else {
+                player = new YT.Player('player', {
+                    videoId: vidId,
+                    playerVars: { 
+                        'autoplay': 1, 
+                        'start': startTime, 
+                        'controls': 1, 
+                        'rel': 0, 
+                        'playsinline': 1,
+                        'modestbranding': 1
+                    },
+                    events: {
+                        'onStateChange': (e) => { if(e.data === YT.PlayerState.ENDED) syncStream(); },
+                        'onError': () => syncStream()
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+</html>
